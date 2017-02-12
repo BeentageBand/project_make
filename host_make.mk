@@ -4,9 +4,9 @@
 # Created on: Oct 5, 2015
 #     Author: puch
 #=======================================================================================#
-_gc_=g++ 
+_gc_=g++
 _ar_=ar
-_gc_flags_=-std=c++11 -Wall -mcmodel=medium -pthread -g
+_gc_flags_=-std=gnu++11 -Wall -pthread -g
 
 include $($(_build_)_PROJECT_DIR)/$($(_build_)_MAK_DIR)/make.mk
 #=======================================================================================#

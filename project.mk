@@ -78,7 +78,7 @@ $(info ****************************************** MODULES INCS DIRS ************
 
 define USER_INC_DIRS
 
-$(_build_)_PACKAGE_INC_DIR+=$(shell find $($(_build_)_PROJECT_DIR) -path */pk_*_user 2>/dev/null)
+$(_build_)_PACKAGE_INC_DIR+=$(shell find $($(_build_)_PROJECT_DIR) -path *pk_*_user 2>/dev/null)
 $(_build_)_PACKAGE_INC_DIR+=$(shell find $($(_build_)_PROJECT_DIR) -path *_inc 2>/dev/null)
 #$(_build_)_PROJECT_INC_DIR+=$(shell find $($(_build_)_PROJECT_DIR) -path */pk_*_code/_inc 2>/dev/null)
 
