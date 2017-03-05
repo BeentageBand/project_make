@@ -6,7 +6,7 @@
 #=======================================================================================#
 
 _gc_macros_=$($($(_build_)_FLAVOR)_MACROS)
-
+_gpp_macros_=$($($(_build_)_FLAVOR)_MACROS)
 
 define $(_build_)_$(_curr_)_ALL_INCS
 
