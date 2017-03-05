@@ -11,6 +11,7 @@
 
 ifneq "$($(_build_)_PROJECT_DIR)" ""
 export $(_build_)_PROJECT_DIR=.
+export $(_build_)_PROJECT_REAL_PATH=$(realpath $($(_build_)_PROJECT_DIR))
 endif
 
 export $(_build_)_OUT_DIR=$($(_build_)_PROJECT_DIR)/out
@@ -118,7 +119,7 @@ bin_objs  \
 _lprefix_=lib
 _lib_ext_=.a
 _obj_ext_=.o
-_src_ext_=.cpp
+_src_ext_=
 
 define INCLUDE_MAKEFILE_template
 _curr_:=$(word $(_i_), $($(_build_)_PACKAGE_NAME) )
@@ -175,7 +176,8 @@ $(foreach _pk_, $($(_build_)_PACKAGE_NAME), \
 define PACKAGE_INC_BUILD
 
 $($(_build_)_INC_DIR)/$(notdir $(_inc_) ) : $($(_build_)_INC_DIR) $(_inc_)
-	-cp -pf $(_inc_) $($(_build_)_INC_DIR)
+	echo $(realpath .)
+	-ln -Pf $(_inc_) $($(_build_)_INC_DIR)/$(notdir $(_inc_) )
 
 endef
 

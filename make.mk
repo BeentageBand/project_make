@@ -72,7 +72,7 @@ define $(_build_)_$(_curr_)_BIN_NAME_MAKE
 
 ifneq "$($(_build_)_$(_curr_)_bin_name)" ""
 $($(_build_)_BIN_DIR)/$($(_build_)_$(_curr_)_bin_name) : $($(_build_)_BIN_DIR) $($(_build_)_$(_curr_)_bin_objs) $($(_build_)_$(_curr_)_bin_libs)
-	$(_gc_) $(_gc_flags_) $(_gc_macros_) $(addprefix -I, $($(_build_)_PROJECT_INC_DIR) ) \
+	$(_gpp_) $(_gpp_flags_) $(_gpp_macros_) $(addprefix -iquote, $($(_build_)_PROJECT_INC_DIR) ) \
       -o $$@ $($(_build_)_$(_curr_)_bin_objs) $(addprefix -L, $($(_build_)_PROJECT_LIB_DIR) ) \
       $(patsubst $($(_build_)_LIB_DIR)/$(_lprefix_)%$(_lib_ext_),-l%,$($(_build_)_$(_curr_)_bin_libs) ) \
       $(_lbs_)
@@ -111,9 +111,18 @@ $(eval \
  ##
 define $(_build_)_$(_curr_)_OBJ_MAKE
 ifneq "$(_obj_)" ""
-$(_obj_) : $($(_build_)_OBJ_DIR) $($(_build_)_$(_curr_)_$(_tar_)_incs) $(_src_)
-	$(_gc_) $(_gc_flags_) $(_gc_macros_) $(addprefix -I, $($(_build_)_PROJECT_INC_DIR) ) \
-    -c $(_src_) $($(_build_)_$(_curr_)_$(_tar_)_incs) -o $$@
+
+ifneq "$(shell find $(dir $(_src_)) -name $(notdir $(_src_).c ) )" ""
+$(_obj_) : $($(_build_)_OBJ_DIR) $($(_build_)_$(_curr_)_$(_tar_)_incs) $(_src_).c
+	$(_gc_) $(_gc_flags_) $(_gc_macros_) $(addprefix -iquote, $($(_build_)_PROJECT_INC_DIR) ) \
+    -c $(_src_).c $($(_build_)_$(_curr_)_$(_tar_)_incs) -o $$@
+endif
+ifneq "$(shell find $(dir $(_src_)) -name $(notdir $(_src_).cpp ) )" ""
+$(_obj_) : $($(_build_)_OBJ_DIR) $($(_build_)_$(_curr_)_$(_tar_)_incs) $(_src_).cpp
+	$(_gpp_) $(_gpp_flags_) $(_gpp_macros_) $(addprefix -iquote, $($(_build_)_PROJECT_INC_DIR) ) \
+    -c $(_src_).cpp $($(_build_)_$(_curr_)_$(_tar_)_incs) -o $$@
+endif
+
 endif
 endef
 
