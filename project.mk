@@ -190,7 +190,7 @@ $(foreach _inc_, $($(_build_)_PACKAGE_INC), \
  # CALL CLEAN
  ## 
 clean :
-	$(RM) -r out/;
+	$(RM) -r out/ $($(_build_)_clean);
 
 ##
  # MAKE RULE FOR OUTPUT DIR
