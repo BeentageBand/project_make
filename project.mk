@@ -177,7 +177,7 @@ define PACKAGE_INC_BUILD
 
 $($(_build_)_INC_DIR)/$(notdir $(_inc_) ) : $($(_build_)_INC_DIR) $(_inc_)
 	echo $(realpath .)
-	-ln -Pf $(_inc_) $($(_build_)_INC_DIR)/$(notdir $(_inc_) )
+	-cp -Pf $(_inc_) $($(_build_)_INC_DIR)/$(notdir $(_inc_) )
 
 endef
 
