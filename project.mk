@@ -1,205 +1,108 @@
 ##============================================================================#
- # project.mk
- #============================================================================#
- #  Created on: Dec 21, 2015
- #      Author: puch
- ##===========================================================================#
+# Verbose 
+# Brief: make verbose
+# 1 : statement
+##============================================================================#
+define Verbose
+$(1)
+$(info $(1))
+endef
 
 ##============================================================================#
- # BUILD OUTPUT DIR
- ##===========================================================================#
-
-ifneq "$($(_build_)_PROJECT_DIR)" ""
-export $(_build_)_PROJECT_DIR=.
-export $(_build_)_PROJECT_REAL_PATH=$(realpath $($(_build_)_PROJECT_DIR))
-endif
-
-export $(_build_)_OUT_DIR=$($(_build_)_PROJECT_DIR)/out
-export $(_build_)_INC_DIR=$($(_build_)_OUT_DIR)/$(_build_)/inc
-export $(_build_)_OBJ_DIR=$($(_build_)_OUT_DIR)/$(_build_)/obj
-export $(_build_)_LIB_DIR=$($(_build_)_OUT_DIR)/$(_build_)/lib
-export $(_build_)_BIN_DIR=$($(_build_)_OUT_DIR)/$(_build_)/bin
-
-VERBOSE_MAKE=0
-
-$(_build_)_PROJECT_INC_DIR+=$($(_build_)_INC_DIR)
-$(_build_)_PROJECT_LIB_DIR+=$($(_build_)_LIB_DIR)
+# Project Setup
+# Brief: searches features in project
 ##============================================================================#
- # DEFINE RULES
- ##===========================================================================#
-define INFO_VERBOSE_template
-$1
+define Project_Setup
+FEATURE_LIST=$(shell find $(PROJ_DIR) -name *_make.mk)
+OUT_DIR=$(PROJ_DIR)/out
+endef
 
-#ifeq "$(MAKE_VERB)" "1"
-#   $(info $1 )
-#endif
+##============================================================================#
+# Call_Build
+# Brief: defines project targets
+##============================================================================#
+define Call_Build
+
+.PHONY : all clean-all $(FLAVOR_LIST:%=clean-%) $(FLAVOR_LIST)
+
+
+all : $(FLAVOR_LIST)
+
+$(OUT_DIR) :
+	-mkdir $$@;
+
+clean-all:
+	-rm -rf $(OUT_DIR);
+	
+endef
+
+##============================================================================#
+# Make_Flavors
+# Brief: declare flavor and flavor output dir
+# 1 : flavor name
+##============================================================================#
+define Make_Flavors
+_flavor_:=$(1)
+$(1)_OUT_DIR=$(OUT_DIR)/$(1)
+endef
+
+##============================================================================#
+# Flavor_Setup
+# Brief : declares flavor output dir tree
+##============================================================================#
+define Flavor_Setup
+$(_flavor_)_INC_DIR=$($(_flavor_)_OUT_DIR)/inc
+$(_flavor_)_BIN_DIR=$($(_flavor_)_OUT_DIR)/bin
+$(_flavor_)_LIB_DIR=$($(_flavor_)_OUT_DIR)/lib
+$(_flavor_)_OBJ_DIR=$($(_flavor_)_OUT_DIR)/obj
+endef
+
+##============================================================================#
+# Call_Flavor
+# Brief : defines targets for specific flavor 
+##============================================================================#
+define Call_Flavor
+
+$(_flavor_) : $($(_flavor_)_BIN:%=$($(_flavor_)_BIN_DIR)/%)
+
+$($(_flavor_)_INC_DIR) $($(_flavor_)_BIN_DIR) $($(_flavor_)_LIB_DIR) $($(_flavor_)_OBJ_DIR) : $($(_flavor_)_OUT_DIR)
+	-mkdir $$@;
+
+$($(_flavor_)_OUT_DIR) : $(OUT_DIR)
+	-mkdir $$@;
+
+clean-$(_flavor_) :
+	-rm -rf $($(_flavor_)_OUT_DIR);
 
 endef
-##============================================================================#
- # BUILD MODULE ADDITION VARIABLES
- ##===========================================================================#
-##
- #Generate all build modules
- ##
-$(eval \
-   $(call INFO_VERBOSE_template, \
-     $(_build_)_PACKAGE_FIND=$(shell find $($(_build_)_PROJECT_DIR) -name *_makefile.mk) \
-   ) \
-)
-##
- # BUILD_MODULE_PATH=.../pk_module_1/ .../pk_module_N/ ...
- ##
- 
-$(info ****************************************** SET MODULES ********************************)
- 
-$(eval \
-   $(foreach _pk_, $($(_build_)_PACKAGE_FIND), \
-      $(call INFO_VERBOSE_template, \
-            $(_build_)_PACKAGE_PATH+=$(dir $(_pk_) ) \
-      ) \
-   ) \
-)
 
-##
- # BUILD_MODULE_PACK=pk_module_1 pk_module_N ...
- ##
-$(foreach _pk_,$($(_build_)_PACKAGE_PATH), \
-   $(eval \
-      $(call INFO_VERBOSE_template, \
-         $(_build_)_PACKAGE_NAME+=$(patsubst $(realpath $(_pk_)../)/%,%, $(realpath $(_pk_)) )\
-      )\
+##============================================================================#
+# Make_Feat
+# Brief: searches features dir and makes targets
+# 1 : feat's filename
+##============================================================================#
+define Make_Feat
+$(_flavor_)_$(_feat_)_dir=$(dir $(1))
+include $(1)
+endef
+
+##============================================================================#
+# Eval Project's Build
+##============================================================================#
+$(eval $(call Verbose,$(call Project_Make)))
+$(eval $(call Verbose,$(call Project_Setup)))
+$(eval $(call Verbose,$(call Call_Build)))
+$(foreach fl,$(FLAVOR_LIST),\
+   $(eval $(call Verbose,$(call Make_Flavors,$(fl)))) \
+   $(eval $(call Verbose,$(call Flavor_Setup))) \
+   $(eval $(call Verbose,$(fl)_PROJ_INC+=$($(fl)_INC_DIR))) \
+   $(foreach ft,$(FEATURE_LIST),\
+      $(eval $(call Verbose,_feat_:=$(notdir $(ft:_make.mk=)))) \
+      $(eval $(call Verbose,$(call Make_Feat,$(ft)))) \
    )\
-)
-
-##
- # BUILD_MODULE_USER_INC=pk_module_1/pk_module_1_user/*.h pk_module_N/pk_module_N_user/*.h ...
- ##
- 
-$(info ****************************************** MODULES INCS DIRS ********************************)
-
-define USER_INC_DIRS
-
-$(_build_)_PACKAGE_INC_DIR+=$(shell find $($(_build_)_PROJECT_DIR) -path *pk_*_user 2>/dev/null)
-$(_build_)_PACKAGE_INC_DIR+=$(shell find $($(_build_)_PROJECT_DIR) -path *_inc 2>/dev/null)
-#$(_build_)_PROJECT_INC_DIR+=$(shell find $($(_build_)_PROJECT_DIR) -path */pk_*_code/_inc 2>/dev/null)
-
-endef
-
-$(eval \
-   $(call INFO_VERBOSE_template, $(USER_INC_DIRS) )\
-)
-
-define USER_INCS
-
-$(_build_)_PACKAGE_INC+=$(shell find $(i) -name *.h 2>/dev/null)
-
-endef
-
-$(foreach i, $($(_build_)_PACKAGE_INC_DIR), \
-   $(eval \
-      $(call INFO_VERBOSE_template, $(USER_INCS) )\
-   ) \
-)
-
-##
- # BUILD_MODULE_MAKE=pk_module_1/Makefile*.mk pk_module_N/Makefile*.mk ...
- ##
-$(info ****************************************** SUB-MAKE_RULES ********************************)
-
-export EXPORTABLE_PACKAGE_VARS:=\
-lib_name  \
-lib_libs  \
-lib_objs  \
-lib_incs  \
-bin_name  \
-bin_incs  \
-bin_libs  \
-bin_objs  \
-
-_lprefix_=lib
-_lib_ext_=.a
-_obj_ext_=.o
-_src_ext_=
-
-define INCLUDE_MAKEFILE_template
-_curr_:=$(word $(_i_), $($(_build_)_PACKAGE_NAME) )
-_path_:=$(word $(_i_), $($(_build_)_PACKAGE_PATH) )
-
-include $(word $(_i_), $($(_build_)_PACKAGE_FIND) )
-endef
-
-$(foreach _i_,$(shell seq 1 $(words $($(_build_)_PACKAGE_NAME)) ), \
-   $(eval \
-      $(call INFO_VERBOSE_template, \
-         $(INCLUDE_MAKEFILE_template) \
-      )\
-   ) \
-)
-
-##============================================================================#
- # CALL RULES
- ##===========================================================================#
-##
- # CALL BUILD
- ##
- $(info ****************************************** CALL BUILD ********************************)
-define CALL_BUILD
-.PHONY : $($(_build_)_PACKAGE_NAME)
-
-$(_build_) : $($(_build_)_PACKAGE_NAME)
-endef
-
-$(eval \
-   $(call INFO_VERBOSE_template, \
-      $(CALL_BUILD) \
-   ) \
-)
-
-define PACKAGE_BUILD
-
-ifneq "$($(_build_)_$(_pk_)_bin_name)" ""
-   $(_pk_) : $(addprefix $($(_build_)_INC_DIR)/, \
-   $(notdir $($(_build_)_PACKAGE_INC) ) ) $($(_build_)_BIN_DIR)/$($(_build_)_$(_pk_)_bin_name)
-endif
-
-endef
-
-$(foreach _pk_, $($(_build_)_PACKAGE_NAME), \
-   $(eval \
-     $(call INFO_VERBOSE_template, $(PACKAGE_BUILD) )\
+   $(foreach ft,$(FEATURE_LIST),\
+      $(eval $(call Verbose,_feat_:=$(notdir $(ft:_make.mk=)))) \
+      $(eval $(call Verbose,include $(PROJ_MAK_DIR)/$($(_flavor_)_build)_makefile.mk)) \
    )\
+   $(eval $(call Verbose,$(call Call_Flavor)))\
 )
-
-##
- # CALL INCS
- ##
-define PACKAGE_INC_BUILD
-
-$($(_build_)_INC_DIR)/$(notdir $(_inc_) ) : $($(_build_)_INC_DIR) $(_inc_)
-	echo $(realpath .)
-	-cp -Pf $(_inc_) $($(_build_)_INC_DIR)/$(notdir $(_inc_) )
-
-endef
-
-$(foreach _inc_, $($(_build_)_PACKAGE_INC), \
-   $(eval \
-     $(call INFO_VERBOSE_template, $(PACKAGE_INC_BUILD) ) \
-   )\
-)
-##
- # CALL CLEAN
- ## 
-clean :
-	$(RM) -r out/ $($(_build_)_clean);
-
-##
- # MAKE RULE FOR OUTPUT DIR
- ##
-$($(_build_)_BIN_DIR) $($(_build_)_LIB_DIR) $($(_build_)_OBJ_DIR) $($(_build_)_INC_DIR) : $($(_build_)_OUT_DIR)/$(_build_)
-	-mkdir $@
-
-$($(_build_)_OUT_DIR)/$(_build_): $($(_build_)_OUT_DIR)
-	-mkdir $@
-
-$($(_build_)_OUT_DIR):
-	-mkdir $@
