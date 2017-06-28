@@ -48,8 +48,10 @@ ifneq "" "$($(_flavor_)_$(_feat_)_bin)$($(_flavor_)_$(_feat_)_bin_libs)$($(_flav
 $(eval $(call Verbose,$(call Bin_Target)))
 endif
 
+ifndef $(_flavor_)_$(_feat_)_ovr_lib_tar
 ifneq "" "$($(_flavor_)_$(_feat_)_lib)$($(_flavor_)_$(_feat_)_lib_objs)"
 $(eval $(call Verbose,$(call Lib_Target)))
+endif
 endif
 
 $(eval $(call Verbose,$(call Inc_Target)))
