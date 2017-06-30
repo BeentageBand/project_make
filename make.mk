@@ -9,12 +9,13 @@ endef
 ##============================================================================#
 # Inc_Target
 # Brief : include target from publich api headers
+# 1 : inc name
 ##============================================================================#
 define Inc_Target
-$($(_flavor_)_INC_DIR)/%.h : $($(_flavor_)_$(_feat_)_dir)%.h $($(_flavor_)_INC_DIR)
+ifneq "" "$(shell find $($(_flavor_)_$(_feat_)_dir) -name $(1))"
+$($(_flavor_)_INC_DIR)/$(1) : $($(_flavor_)_$(_feat_)_dir)$(1) $($(_flavor_)_INC_DIR)
 	$(CP) $(CPFLAGS) $$< $$@;
-$($(_flavor_)_INC_DIR)/%.hpp : $($(_flavor_)_$(_feat_)_dir)%.hpp $($(_flavor_)_INC_DIR)
-	$(CP) $(CPFLAGS) $$< $$@;
+endif
 endef
 ##============================================================================#
 # Lib_Target
@@ -29,15 +30,16 @@ endef
 # Obj_Target
 # Brief : object target from C/C++ source files only reqs
 # 1 : src name
+# 1 : src extension
 ##============================================================================#
 define Obj_Target
-ifneq "" "$(shell find $($(_flavor_)_$(_feat_)_dir) -name $(1).c)"
-$($(_flavor_)_OBJ_DIR)/$(1).o : $($(_flavor_)_$(_feat_)_dir)$(1).c $($(_flavor_)_INC:%=$($(_flavor_)_INC_DIR)/%) $($(_flavor_)_OBJ_DIR)
-	$(CC) $(CFLAGS) $(CMACROS) $($(_flavor_)_PROJ_INC:%=-iquote %) -o $$@ -c $$<;
-endif
-ifneq "" "$(shell find $($(_flavor_)_$(_feat_)_dir) -name $(1).cpp)"
-$($(_flavor_)_OBJ_DIR)/$(1).o : $($(_flavor_)_$(_feat_)_dir)$(1).cpp $($(_flavor_)_INC:%=$($(_flavor_)_INC_DIR)/%) $($(_flavor_)_OBJ_DIR)
+ifneq "" "$(shell find $($(_flavor_)_$(_feat_)_dir) -name $(1).$(2))"
+$($(_flavor_)_OBJ_DIR)/$(1).o : $($(_flavor_)_$(_feat_)_dir)$(1).$(2) $($(_flavor_)_INC:%=$($(_flavor_)_INC_DIR)/%) $($(_flavor_)_OBJ_DIR)
+  ifeq "cpp" "$(2)"
 	$(CPP) $(CPPFLAGS) $(CMACROS) $($(_flavor_)_PROJ_INC:%=-iquote %) -o $$@ -c $$<;
+  else
+	$(CC) $(CFLAGS) $(CMACROS) $($(_flavor_)_PROJ_INC:%=-iquote %) -o $$@ -c $$<;
+  endif
 endif
 endef
 
@@ -54,8 +56,11 @@ $(eval $(call Verbose,$(call Lib_Target)))
 endif
 endif
 
-$(eval $(call Verbose,$(call Inc_Target)))
+$(foreach inc,$($(_flavor_)_$(_feat_)_inc),\
+   $(eval $(call Verbose,$(call Inc_Target,$(inc)))) \
+)
 
 $(foreach src,$($(_flavor_)_$(_feat_)_bin_objs) $($(_flavor_)_$(_feat_)_lib_objs),\
-   $(eval $(call Verbose,$(call Obj_Target,$(src))))\
+   $(eval $(call Verbose,$(call Obj_Target,$(src),c)))\
+   $(eval $(call Verbose,$(call Obj_Target,$(src),cpp)))\
 )
