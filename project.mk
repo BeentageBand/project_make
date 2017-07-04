@@ -96,13 +96,14 @@ $(foreach fl,$(FLAVOR_LIST),\
    $(eval $(call Verbose,$(call Make_Flavors,$(fl)))) \
    $(eval $(call Verbose,$(call Flavor_Setup))) \
    $(eval $(call Verbose,$(fl)_PROJ_INC+=$($(fl)_INC_DIR))) \
+   $(eval $(call Verbose,include $(PROJ_MAK_DIR)/$($(_flavor_)_build)_makefile.mk)) \
    $(foreach ft,$(FEATURE_LIST),\
       $(eval $(call Verbose,_feat_:=$(notdir $(ft:_make.mk=)))) \
       $(eval $(call Verbose,$(call Make_Feat,$(ft)))) \
    )\
    $(foreach ft,$(FEATURE_LIST),\
       $(eval $(call Verbose,_feat_:=$(notdir $(ft:_make.mk=)))) \
-      $(eval $(call Verbose,include $(PROJ_MAK_DIR)/$($(_flavor_)_build)_makefile.mk)) \
-   )\
+      $(eval $(call Verbose,include $(PROJ_MAK_DIR)/make.mk)) \
+   ) \
    $(eval $(call Verbose,$(call Call_Flavor)))\
 )

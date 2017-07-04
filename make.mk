@@ -3,8 +3,8 @@
 # Brief : binary target from libs and objs reqs
 ##============================================================================#
 define Bin_Target
-$($(_flavor_)_$(_feat_)_bin:%=$($(_flavor_)_BIN_DIR)/%) : $($(_flavor_)_$(_feat_)_bin_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) $($(_flavor_)_$(_feat_)_bin_libs:%=$($(_flavor_)_LIB_DIR)/lib%.a) $($(_flavor_)_INC:$($(_flavor_)_INC_DIR)/%) $($(_flavor_)_BIN_DIR)
-	$(CPP) $(CPPFLAGS) $(CMACROS) $($(_flavor_)_PROJ_INC:%=-iquote %) -o $$@ $($(_flavor_)_$(_feat_)_bin_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) -L $($(_flavor_)_LIB_DIR) $($(_flavor_)_$(_feat_)_bin_libs:%=-l%);
+$(bin:%=$($(_flavor_)_BIN_DIR)/%) : $(bin_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) $(bin_libs:%=$($(_flavor_)_LIB_DIR)/lib%.a) $($(_flavor_)_INC:$($(_flavor_)_INC_DIR)/%) $($(_flavor_)_BIN_DIR)
+	$(CPP) $(CPPFLAGS) $(CMACROS) $($(_flavor_)_PROJ_INC:%=-iquote %) -o $$@ $(bin_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) -L $($(_flavor_)_LIB_DIR) $(bin_libs:%=-l%);
 endef
 ##============================================================================#
 # Inc_Target
@@ -22,8 +22,12 @@ endef
 # Brief : static library target from output reqs
 ##============================================================================#
 define Lib_Target
-$($(_flavor_)_$(_feat_)_lib:%=$($(_flavor_)_LIB_DIR)/lib%.a) : $($(_flavor_)_$(_feat_)_lib_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) $($(_flavor_)_LIB_DIR)
-	$(AR) $(AFLAGS) $$@ $($(_flavor_)_$(_feat_)_lib_objs:%=$($(_flavor_)_OBJ_DIR)/%.o);
+$(lib:%=$($(_flavor_)_LIB_DIR)/lib%.a) : $(lib_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) $(lib_libs:%=$($(_flavor_)_LIB_DIR)/lib%.a) $($(_flavor_)_LIB_DIR)
+ifdef $(_flavor_)_$(_feat_)_lib_objs
+	$(AR) $(AFLAGS) $$@ $(lib_objs:%=$($(_flavor_)_OBJ_DIR)/%.o);
+else
+	$(AR) $(LFLAGS) $$@ $(lib_libs:%=$($(_flavor_)_LIB_DIR)/lib%.a);
+endif
 endef
 
 ##============================================================================#
@@ -46,12 +50,20 @@ endef
 ##============================================================================#
 # Call Targets
 ##============================================================================#
+bin:=$($(_flavor_)_$(_feat_)_bin)
+bin_objs:=$($(_flavor_)_$(_feat_)_bin_objs)
+bin_libs:=$($(_flavor_)_$(_feat_)_bin_libs)
+
+lib:=$($(_flavor_)_$(_feat_)_lib)
+lib_objs:=$($(_flavor_)_$(_feat_)_lib_objs)
+lib_libs:=$($(_flavor_)_$(_feat_)_lib_libs)
+
 ifneq "" "$($(_flavor_)_$(_feat_)_bin)$($(_flavor_)_$(_feat_)_bin_libs)$($(_flavor_)_$(_feat_)_bin_objs)"
 $(eval $(call Verbose,$(call Bin_Target)))
 endif
 
 ifndef $(_flavor_)_$(_feat_)_ovr_lib_tar
-ifneq "" "$($(_flavor_)_$(_feat_)_lib)$($(_flavor_)_$(_feat_)_lib_objs)"
+ifneq "" "$($(_flavor_)_$(_feat_)_lib)"
 $(eval $(call Verbose,$(call Lib_Target)))
 endif
 endif
