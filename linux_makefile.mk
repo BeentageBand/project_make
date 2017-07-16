@@ -5,7 +5,7 @@ AR:=ar
 AFLAGS:=-rcs
 LFLAGS:=-rcT
 CP:=-cp
-CPFLAGS:=-Pf
+CPFLAGS:=-sf
 CPP:=g++
 CPPFLAGS:=-std=gnu++11 -Wall -pthread -g
 endef

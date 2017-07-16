@@ -13,7 +13,7 @@ endef
 ##============================================================================#
 define Inc_Target
 ifneq "" "$(shell find $($(_flavor_)_$(_feat_)_dir) -name $(1))"
-$($(_flavor_)_INC_DIR)/$(1) : $($(_flavor_)_$(_feat_)_dir)$(1) $($(_flavor_)_INC_DIR)
+$($(_flavor_)_INC_DIR)/$(1) : $(realpath $($(_flavor_)_$(_feat_)_dir))/$(1) $($(_flavor_)_INC_DIR)
 	$(CP) $(CPFLAGS) $$< $$@;
 endif
 endef
