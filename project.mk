@@ -51,9 +51,10 @@ endef
 ##============================================================================#
 define Flavor_Setup
 $(_flavor_)_INC_DIR=$($(_flavor_)_OUT_DIR)/inc
-$(_flavor_)_BIN_DIR=$($(_flavor_)_OUT_DIR)/bin
 $(_flavor_)_LIB_DIR=$($(_flavor_)_OUT_DIR)/lib
 $(_flavor_)_OBJ_DIR=$($(_flavor_)_OUT_DIR)/obj
+$(_flavor_)_BIN_DIR=$($(_flavor_)_OUT_DIR)/bin
+
 endef
 
 ##============================================================================#
