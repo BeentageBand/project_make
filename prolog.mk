@@ -1,4 +1,4 @@
-define Make_Verbose
+define Verbose
 $(1)
 $(info $(1))
 endef

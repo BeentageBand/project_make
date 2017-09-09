@@ -13,7 +13,9 @@ endef
 ##============================================================================#
 define Project_Setup
 FEATURE_LIST=$(shell find $(PROJ_DIR) -name *_make.mk)
+ifndef OUT_DIR
 OUT_DIR=$(PROJ_DIR)/out
+endif
 endef
 
 ##============================================================================#
@@ -31,7 +33,7 @@ $(OUT_DIR) :
 	-mkdir $$@;
 
 clean-all:
-	-rm -rf $(OUT_DIR);
+	-rm -rf $(OUT_DIR) $(FLAVOR_LIST:%=$($(%)_clean));
 	
 endef
 
@@ -72,7 +74,7 @@ $($(_flavor_)_OUT_DIR) : $(OUT_DIR)
 	-mkdir $$@;
 
 clean-$(_flavor_) :
-	-rm -rf $($(_flavor_)_OUT_DIR);
+	-rm -rf $($(_flavor_)_OUT_DIR) $($(_flavor_)_clean);
 
 endef
 
