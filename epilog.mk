@@ -5,6 +5,10 @@ define Add_Include
 $(_flavor_)_INC+=$($(_flavor_)_$(_feat_)_inc)
 endef
 
+define Add_Directory
+$(_flavor_)_DIR+=$($(_flavor_)_$(_feat_)_dir)
+endef
+
 define Add_Binary
 $(_flavor_)_BIN+=$($(_flavor_)_$(_feat_)_bin)
 endef
@@ -14,4 +18,5 @@ endef
 
 $(eval $(call Verbose,$(call $(_flavor_)_$(_feat_)_MAKE)))
 $(eval $(call Verbose,$(call Add_Include)))
+$(eval $(call Verbose,$(call Add_Directory)))
 $(eval $(call Verbose,$(call Add_Binary)))

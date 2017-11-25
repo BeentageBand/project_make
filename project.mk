@@ -5,6 +5,7 @@
 ##============================================================================#
 define Verbose
 $(1)
+$(info $(1))
 endef
 
 ##============================================================================#
@@ -105,7 +106,7 @@ $(foreach fl,$(FLAVOR_LIST),\
    )\
    $(foreach ft,$(FEATURE_LIST),\
       $(eval $(call Verbose,_feat_:=$(notdir $(ft:_make.mk=)))) \
-      $(eval $(call Verbose,include $(PROJ_MAK_DIR)/make.mk)) \
+      $(eval $(call Verbose,include $(PROJ_MAK_DIR)/$(RECIPES).mk)) \
    ) \
-   $(eval $(call Verbose,$(call Call_Flavor)))\
+   $(eval $(call Verbose,$(call Call_Flavor))) \
 )

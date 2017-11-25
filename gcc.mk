@@ -1,26 +1,15 @@
-##============================================================================#
-# Bin_Target
-# Brief : binary target from libs and objs reqs
-##============================================================================#
 define Bin_Target
 $(bin:%=$($(_flavor_)_BIN_DIR)/%) : $(bin_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) $(bin_libs:%=$($(_flavor_)_LIB_DIR)/lib%.a) $($(_flavor_)_INC:$($(_flavor_)_INC_DIR)/%) $($(_flavor_)_BIN_DIR)
 	$(CPP) $(CPPFLAGS) $(CMACROS) $($(_flavor_)_PROJ_INC:%=-iquote %) -o $$@ $(bin_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) -L $($(_flavor_)_LIB_DIR) $(bin_libs:%=-l%);
 endef
-##============================================================================#
-# Inc_Target
-# Brief : include target from publich api headers
-# 1 : inc name
-##============================================================================#
+
 define Inc_Target
 ifneq "" "$(shell find $($(_flavor_)_$(_feat_)_dir) -name $(1))"
 $($(_flavor_)_INC_DIR)/$(1) : $(realpath $($(_flavor_)_$(_feat_)_dir))/$(1) $($(_flavor_)_INC_DIR)
 	$(CP) $(CPFLAGS) $$< $$@;
 endif
 endef
-##============================================================================#
-# Lib_Target
-# Brief : static library target from output reqs
-##============================================================================#
+
 define Lib_Target
 $(lib:%=$($(_flavor_)_LIB_DIR)/lib%.a) : $(lib_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) $(lib_libs:%=$($(_flavor_)_LIB_DIR)/lib%.a) $($(_flavor_)_LIB_DIR)
 ifdef $(_flavor_)_$(_feat_)_lib_objs
@@ -30,12 +19,6 @@ else
 endif
 endef
 
-##============================================================================#
-# Obj_Target
-# Brief : object target from C/C++ source files only reqs
-# 1 : src name
-# 1 : src extension
-##============================================================================#
 define Obj_Target
 ifneq "" "$(shell find $($(_flavor_)_$(_feat_)_dir) -name $(1).$(2))"
 $($(_flavor_)_OBJ_DIR)/$(1).o : $($(_flavor_)_$(_feat_)_dir)$(1).$(2) $($(_flavor_)_INC:%=$($(_flavor_)_INC_DIR)/%) $($(_flavor_)_OBJ_DIR)
@@ -47,9 +30,6 @@ $($(_flavor_)_OBJ_DIR)/$(1).o : $($(_flavor_)_$(_feat_)_dir)$(1).$(2) $($(_flavo
 endif
 endef
 
-##============================================================================#
-# Call Targets
-##============================================================================#
 bin:=$($(_flavor_)_$(_feat_)_bin)
 bin_objs:=$($(_flavor_)_$(_feat_)_bin_objs)
 bin_libs:=$($(_flavor_)_$(_feat_)_bin_libs)

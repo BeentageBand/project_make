@@ -8,6 +8,7 @@ CP:=-cp
 CPFLAGS:=-sf
 CPP:=g++
 CPPFLAGS:=-std=c++11 -Wall -pthread -g
+RECIPES=gcc
 endef
 
 $(eval $(call Verbose,$(call LINUX_MAKE)))
