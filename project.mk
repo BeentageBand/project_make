@@ -67,15 +67,17 @@ endef
 define Call_Flavor
 
 $(_flavor_) : $($(_flavor_)_BIN:%=$($(_flavor_)_BIN_DIR)/%)
+	-@echo "$(_flavor_) compiled successfully!!"
 
 $($(_flavor_)_INC_DIR) $($(_flavor_)_BIN_DIR) $($(_flavor_)_LIB_DIR) $($(_flavor_)_OBJ_DIR) : $($(_flavor_)_OUT_DIR)
-	-mkdir $$@;
+	-@mkdir $$@;
 
 $($(_flavor_)_OUT_DIR) : $(OUT_DIR)
-	-mkdir $$@;
+	-@mkdir $$@;
 
 clean-$(_flavor_) :
-	-rm -rf $($(_flavor_)_OUT_DIR) $($(_flavor_)_clean);
+	-@echo "Cleaning $(_flavor_) .."
+	-@rm -rf $($(_flavor_)_OUT_DIR) $($(_flavor_)_clean);
 
 endef
 
@@ -86,7 +88,7 @@ endef
 ##============================================================================#
 define Make_Feat
 $(_flavor_)_$(_feat_)_dir=$(dir $(1))
-include $(1)
+-include $(1)
 endef
 
 ##============================================================================#
