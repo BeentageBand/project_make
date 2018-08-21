@@ -1,6 +1,6 @@
 define LINUX_MAKE
 CC:=gcc
-CFLAGS:=-std=gnu11 -pthread -g 
+CFLAGS:=-std=gnu11 -pthread -lrt -g 
 AR:=ar
 AFLAGS:=-rcs
 LFLAGS:=-rcT
@@ -8,7 +8,7 @@ CP:=-cp
 CMACROS:=$($($(_flavor_)_build)_MACROS)
 CPFLAGS:=-sf
 CPP:=g++
-CPPFLAGS:=-std=gnu++11 -pthread -g
+CPPFLAGS:=-std=gnu++11 -pthread -lrt -g
 RECIPES=gcc
 endef
 
