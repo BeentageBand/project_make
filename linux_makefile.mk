@@ -4,7 +4,7 @@ CFLAGS:=-std=gnu11 -g
 AR:=ar
 AFLAGS:=-rcs
 LFLAGS:=-rcT
-CP:=-cp
+CP:=-ln
 CMACROS:=$($($(_flavor_)_build)_MACROS)
 LD_LIBS:=$($($(_flavor_)_build)_PROJ_LIBS)
 CPFLAGS:=-sf
