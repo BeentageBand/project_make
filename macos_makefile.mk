@@ -1,6 +1,6 @@
 define LINUX_MAKE
 CC:=gcc
-CFLAGS:=-std=gnu11 -g 
+CFLAGS:=-std=c11 -g 
 AR:=ar
 AFLAGS:=-rcs
 LFLAGS:=-rcT
@@ -9,8 +9,8 @@ CMACROS:=$($($(_flavor_)_build)_MACROS)
 LD_LIBS:=$($($(_flavor_)_build)_PROJ_LIBS)
 CPFLAGS:=-sf
 CPP:=g++
-CPPFLAGS:=-std=gnu++11 -g
-RECIPES=gcc
+CPPFLAGS:=-std=c++11 -g
+RECIPES=gcc_macos
 endef
 
 $(eval $(call Verbose,$(call LINUX_MAKE)))

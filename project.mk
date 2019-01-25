@@ -5,6 +5,7 @@
 ##============================================================================#
 define Verbose
 $(1)
+$(info $(1))
 endef
 
 ##============================================================================#
@@ -53,6 +54,14 @@ endef
 # Brief : declares flavor output dir tree
 ##============================================================================#
 define Flavor_Setup
+
+#Selecting host
+ifeq "$(shell uname)" "Darwin" ##
+host_build=macos
+else
+host_build=linux
+endif
+
 $(_flavor_)_INC_DIR=$($(_flavor_)_OUT_DIR)/inc
 $(_flavor_)_LIB_DIR=$($(_flavor_)_OUT_DIR)/lib
 $(_flavor_)_OBJ_DIR=$($(_flavor_)_OUT_DIR)/obj
