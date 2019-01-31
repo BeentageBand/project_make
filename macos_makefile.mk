@@ -9,6 +9,7 @@ CMACROS:=$($($(_flavor_)_build)_MACROS)
 LD_LIBS:=$($($(_flavor_)_build)_PROJ_LIBS)
 CPFLAGS:=-sf
 CPP:=g++
+CXX:=g++
 CPPFLAGS:=-std=c++11 -g
 RECIPES=gcc_macos
 endef
