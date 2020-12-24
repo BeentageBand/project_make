@@ -1,14 +1,4 @@
-#=======================================================================================#
-#host_make.mk
-#=======================================================================================#
-# Created on: Oct 5, 2015
-#     Author: puch
-#=======================================================================================#
-_gc_=avr-g++
-
-_ar_=avr-ar
-
-_gc_flags_=\
+AVR_CXXFLAGS= \
 -funsigned-char                                                       \
 -funsigned-bitfields                                                  \
 -fdata-sections                                                       \
@@ -16,23 +6,24 @@ _gc_flags_=\
 -fshort-enums                                                         \
 -g2                                                                   \
 -Wall                                                                 \
--mmcu=$($($(_build_)_FLAVOR)_MCU)                                     \
+-mmcu=$($($(_flavor_)_build)_MCU)                                     \
 -Os                                                                   \
 -ffunction-sections                                                   \
--DF_CPU=8000000L                                                      \
--DARDUINO=10605                                                       \
--DARDUINO_AVR_PRO                                                     \
--DARDUINO_ARCH_AVR                                                    \
+-DF_CPU=8000000L                                                      
 
-#\
+define AVR_MAKE
+CC:=avr-gcc
+CFLAGS:=-std=gnu11 $(AVR_CXXFLAGS)
+AR:=avr-ar
+AFLAGS:=-rcs
+LFLAGS:=-rcT
+CP:=-ln
+CMACROS:=$($($(_flavor_)_build)_MACROS)
+LD_LIBS:=$($($(_flavor_)_build)_PROJ_LIBS)
+CPFLAGS:=-sf
+CPP:=avr-g++
+CPPFLAGS:=-std=gnu++11 $(AVR_CXXFLAGS) -fno-threadsafe-statics
+RECIPES=gcc
+endef
 
-_lbs_=-lm
-
-include $($(_build_)_PROJECT_DIR)/$($(_build_)_MAK_DIR)/make.mk
-#=======================================================================================#
-# host_make.mk
-#=======================================================================================#
-# Changes Log
-#
-#
-#=======================================================================================#
+$(eval $(call Verbose,$(call AVR_MAKE)))
