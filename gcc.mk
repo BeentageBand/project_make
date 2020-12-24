@@ -1,7 +1,7 @@
 define Bin_Target
 $(bin:%=$($(_flavor_)_BIN_DIR)/%) : $(bin_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) $(bin_libs:%=$($(_flavor_)_LIB_DIR)/lib%.a) $($(_flavor_)_INC:$($(_flavor_)_INC_DIR)/%) $($(_flavor_)_BIN_DIR)
 	-@echo "Link $(bin)-$(_flavor_) .."
-	$(CPP) $(CPPFLAGS) $(CMACROS) $($(_flavor_)_PROJ_INC:%=-I %) -o $$@ $(bin_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) -L $($(_flavor_)_LIB_DIR) -Wl,--start-group $(bin_libs:%=-l%) $($($(_flavor_)_build)_PROJ_LIBS) -Wl,--end-group $(LDFLAGS);
+	$(CPP) $(CPPFLAGS) $(CMACROS) $($(_flavor_)_PROJ_INC:%=-I %) -o $$@ $(bin_objs:%=$($(_flavor_)_OBJ_DIR)/%.o) -L $($(_flavor_)_LIB_DIR) -Wl,--start-group $(LDFLAGS) $(bin_libs:%=-l%) $(LD_LIBS) -Wl,--end-group;
 endef
 
 define Inc_Target

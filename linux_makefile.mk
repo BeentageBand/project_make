@@ -7,6 +7,7 @@ LFLAGS:=-rcT
 CP:=-ln
 CMACROS:=$($($(_flavor_)_build)_MACROS)
 LD_LIBS:=$($($(_flavor_)_build)_PROJ_LIBS)
+LDFLAGS:=
 CPFLAGS:=-sf
 CPP:=g++
 CPPFLAGS:=-std=gnu++11 -g

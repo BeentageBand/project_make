@@ -20,6 +20,7 @@ LFLAGS:=-rcT
 CP:=-ln
 CMACROS:=$($($(_flavor_)_build)_MACROS)
 LD_LIBS:=$($($(_flavor_)_build)_PROJ_LIBS)
+LDFLAGS:=-L /usr/lib/avr/ -Wl,--gc-sections -lm
 CPFLAGS:=-sf
 CPP:=avr-g++
 CPPFLAGS:=-std=gnu++11 $(AVR_CXXFLAGS) -fno-threadsafe-statics
