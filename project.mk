@@ -12,7 +12,6 @@ endef
 # Brief: searches features in project
 ##============================================================================#
 define Project_Setup
-FEATURE_LIST=$(shell find $(PROJ_DIR) -name *_make.mk)
 ifndef OUT_DIR
 OUT_DIR=$(PROJ_DIR)/out
 endif
@@ -108,6 +107,7 @@ $(eval $(call Verbose,$(call Call_Build)))
 $(foreach fl,$(FLAVOR_LIST),\
    $(eval $(call Verbose,$(call Make_Flavors,$(fl)))) \
    $(eval $(call Verbose,$(call Flavor_Setup))) \
+	 $(eval $(call Verbose,FEATURE_LIST=$(foreach subdir,$($(fl)_SUBDIRS),$(shell find $(PROJ_DIR)/$(subdir) -name *_make.mk)))) \
    $(eval $(call Verbose,$(fl)_PROJ_INC+=$($(fl)_INC_DIR))) \
    $(eval $(call Verbose,include $(PROJ_MAK_DIR)/$($(_flavor_)_build)_makefile.mk)) \
    $(foreach ft,$(FEATURE_LIST),\
